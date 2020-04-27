@@ -1,9 +1,9 @@
 #!/bin/bash
 
-FROM_TAG="$1"
-TO_TAG="$2"
+FROM_TAG="$2"
+TO_TAG="$3"
 SPACE="cRAcZ4D1Cr4PP6acwqjQWU" # meveo
-WORKDIR="/mnt/y/Opencell/Sources/Community Clone"
+WORKDIR="$1"
 CURRENT_DIR="$(realpath $(pwd))"
 API_KEY="02dbd0635a36cbbeea48"
 API_SECRET="9e525204512e4ad65dd89b946542173f473db656"
@@ -26,13 +26,13 @@ then
 fi
 
 # Prep files
-echo -e "\n# Changelog\nAll notable changes to this project will be documented in this file.\n">> "$ALL_TICKETS"
-echo -e "## [$2] - $(date +'%d/%m/%y')\n">>"$ALL_TICKETS"
-echo -e "\n### Model Tickets">"$MODEL_TICKETS"
-echo -e "\n### Api Tickets">"$API_TICKETS"
-echo -e "\n### Service Tickets">"$SERVICE_TICKETS"
-echo -e "\n### GUI Tickets">"$GUI_TICKETS"
-echo -e "\n### Bug Tickets">"$BUG_TICKETS"
+echo -e "\n# Changelog\nAll notable changes to this project will be documented in this file.\n">> "$ALL_TICKETS_MD"
+echo -e "## [$2] - $(date +'%d/%m/%y')\n">>"$ALL_TICKETS_MD"
+echo -e "\n### Model">"$MODEL_TICKETS"
+echo -e "\n### Api">"$API_TICKETS"
+echo -e "\n### Service">"$SERVICE_TICKETS"
+echo -e "\n### GUI">"$GUI_TICKETS"
+echo -e "\n### Bug">"$BUG_TICKETS"
 
 cd "${WORKDIR}"
 echo ">>> Fetching origin"
@@ -66,7 +66,6 @@ do
     component=$(echo $json | jq -c '.custom_fields.Component' | sed 's/"//g')
     link="https://opencell.assembla.com/spaces/meveo/tickets/"$number
     tofile="[#$number]($link) - $summary"
-
     echo "$tofile" >> "$ALL_TICKETS"
 
     if [ "$type" == "Enhancement" ]; then
@@ -92,35 +91,31 @@ echo -e "------------------------\n"
 echo -e "Model tickets: \n"
 echo -e "------------------------\n"
 
-cat $MODEL_TICKETS>>"$ALL_TICKETS"
+cat $MODEL_TICKETS>>"$ALL_TICKETS_MD"
 
 echo -e "\n"
 echo -e "------------------------\n"
 echo -e "API tickets: \n"
 echo -e "------------------------\n"
 
-cat $API_TICKETS>>"$ALL_TICKETS"
+cat $API_TICKETS>>"$ALL_TICKETS_MD"
 
 echo -e "\n"
 echo -e "------------------------\n"
 echo -e "Service tickets: \n"
 echo -e "------------------------\n"
 
-cat $SERVICE_TICKETS>>"$ALL_TICKETS"
+cat $SERVICE_TICKETS>>"$ALL_TICKETS_MD"
 
 echo -e "\n"
 echo -e "------------------------\n"
 echo -e "GUI tickets: \n"
 echo -e "------------------------\n"
 
-cat $GUI_TICKETS>>"$ALL_TICKETS"
+cat $GUI_TICKETS>>"$ALL_TICKETS_MD"
 
 
 echo -e "\n"
 echo -e "------------------------\n"
 echo -e "BUG tickets: \n"
 echo -e "------------------------\n"
-
-cat $BUG_TICKETS>>"$ALL_TICKETS"
-
-cat $ALL_TICKETS>>"$ALL_TICKETS_MD"
