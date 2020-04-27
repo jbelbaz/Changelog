@@ -2,13 +2,15 @@
 OLD_IFS=$IFS
 
 if [ "$#" -lt 2 ]; then
-    echo "FATAL : PARAMS ARE MISSING."
+    echo "FATAL : PARAMS ARE MISSING." 
     echo "Syntax : ./mig.sh FROM_TAG TO_TAG"
-        echo "FROM_TAG : 6.0.0"
-        echo "TO_TAG   : 6.0.2"
-        echo "EXIT WITH ERROR"
-        exit
+	echo "FROM_TAG : 6.0.0"
+	echo "TO_TAG   : 6.0.2"
+	echo "EXIT WITH ERROR"
+	exit
 fi
+
+pwd
 
 FROM_TAG=$2
 TO_TAG=$3
@@ -39,12 +41,11 @@ for changeSet in "${changeSets[@]}"
 printf '%s\n' "${ids[@]}"
 
 
-IFS=$OLD_IFS
-echo -e "# $TITLE\n" >> ../$FILE_NAME
-echo -e "$DESCRIPTION\n\n" >> ../$FILE_NAME
-echo -e "## $TO_TAG - $TODAY\n\n" >> ../$FILE_NAME
+IFS=$OLD_IFS    
+echo -e "$TITLE\n$DESCRIPTION\n" >> ../$FILE_NAME
+echo -e "## [$TO_TAG] - $TODAY\n" >> ../$FILE_NAME
 echo $INCLUDE >> ../$FILE_NAME
-for k in $(git tag -l  --sort=v:refname); do
+for k in $(git tag -l  --sort=v:refname); do 
     if [  $k \> "$FROM_TAG" -a \( $k \< "$TO_TAG" -o $k == "$TO_TAG" \) ]; then
         git checkout $k -f
         echo "-- checkout $k "
