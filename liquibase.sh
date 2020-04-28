@@ -42,7 +42,7 @@ printf '%s\n' "${ids[@]}"
 
 
 IFS=$OLD_IFS    
-echo -e "$TITLE\n$DESCRIPTION\n" >> ../$FILE_NAME
+echo -e "$TITLE\n$DESCRIPTION\n" > ../$FILE_NAME
 echo -e "## [$TO_TAG] - $TODAY\n" >> ../$FILE_NAME
 echo $INCLUDE >> ../$FILE_NAME
 for k in $(git tag -l  --sort=v:refname); do 
