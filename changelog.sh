@@ -26,8 +26,8 @@ then
 fi
 
 # Prep files
-echo -e "\n# Changelog\nAll notable changes to this project will be documented in this file.\n">> "$ALL_TICKETS_MD"
-echo -e "## [$2] - $(date +'%d/%m/%y')\n">>"$ALL_TICKETS_MD"
+echo -e "\n# Changelog\nAll notable changes to this project will be documented in this file.\n"> "$ALL_TICKETS_MD"
+echo -e "## [$TO_TAG] - $TODAY\n">>"$ALL_TICKETS_MD"
 echo -e "\n### Model">"$MODEL_TICKETS"
 echo -e "\n### Api">"$API_TICKETS"
 echo -e "\n### Service">"$SERVICE_TICKETS"
@@ -60,12 +60,12 @@ do
     currentTicket=$(( $currentTicket + 1 ))
     echo Ticket "core#${ticketNumber} (${currentTicket}/${ticketsCount})"
     json=$( curl -H "X-Api-Key: ${API_KEY}" -H "X-Api-Secret: ${API_SECRET}" https://api.assembla.com/v1/spaces/cRAcZ4D1Cr4PP6acwqjQWU/tickets/${ticketNumber} )
-    number=$(echo $json | jq -c '.number')
+    number=$(echo $json | jq -c '.number') 
     type=$(echo $json | jq -c '.custom_fields.Type' | sed 's/"//g')
     summary=$(echo $json | jq -c '.summary' | sed 's/"//g')
     component=$(echo $json | jq -c '.custom_fields.Component' | sed 's/"//g')
     link="https://opencell.assembla.com/spaces/meveo/tickets/"$number
-    tofile="[#$number]($link) - $summary"
+    tofile="- [#$number]($link) - $summary"
     echo "$tofile" >> "$ALL_TICKETS"
 
     if [ "$type" == "Enhancement" ]; then
@@ -119,3 +119,5 @@ echo -e "\n"
 echo -e "------------------------\n"
 echo -e "BUG tickets: \n"
 echo -e "------------------------\n"
+
+cat $BUG_TICKETS>>"$ALL_TICKETS_MD"
