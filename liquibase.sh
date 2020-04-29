@@ -58,6 +58,7 @@ for k in $(git tag -l  --sort=v:refname); do
         echo "-- changesets 22 defined"
         for changeSet in "${changeSets[@]}"
         do
+            echo "-- $changeSet"
             id=$(echo $changeSet | xmllint --format --xpath "string(//*/@id)" -)
             echo "-- id defined"
             ticket=$(echo $id | sed 's/#//g' | sed -E 's/([0-9]*)_.*/\1/')
