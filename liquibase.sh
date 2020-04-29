@@ -33,7 +33,9 @@ git checkout $FROM_TAG -f
 ids=()
 IFS=$'§'
 changeSets=( $(xmllint --format --xpath "//*[local-name() = 'changeSet']" $STRUCTURE_CHANGE_LOG | sed 's/changeSet>/changeSet>§/g'))
+echo "-- changesets 11 defined"
 changeSets+=( $(xmllint --format --xpath "//*[local-name() = 'changeSet']" $DATA_CHANGE_LOG | sed 's/changeSet>/changeSet>§/g'))
+echo "-- changesets 12 defined"
 for changeSet in "${changeSets[@]}"
     do
         ids+=($(echo $changeSet | xmllint --format --xpath "string(//*/@id)" -))
@@ -51,12 +53,15 @@ for k in $(git tag -l  --sort=v:refname); do
         echo "-- checkout $k "
         IFS=$'§'
         changeSets=( $(xmllint --format --xpath "//*[local-name() = 'changeSet']" $STRUCTURE_CHANGE_LOG | sed 's/changeSet>/changeSet>§/g'))
+        echo "-- changesets 21 defined"
         changeSets+=( $(xmllint --format --xpath "//*[local-name() = 'changeSet']" $DATA_CHANGE_LOG | sed 's/changeSet>/changeSet>§/g'))
-        echo "-- changeset(s) defined"
+        echo "-- changesets 22 defined"
         for changeSet in "${changeSets[@]}"
         do
             id=$(echo $changeSet | xmllint --format --xpath "string(//*/@id)" -)
+            echo "-- id defined"
             ticket=$(echo $id | sed 's/#//g' | sed -E 's/([0-9]*)_.*/\1/')
+            echo "-- ticket defined"
             changeSetNoXML=$(echo $changeSet | perl -pe 's/<changeSet.*?>//g' | perl -pe 's/<(?=[a-zA-Z]*?\s)/;/g' | perl -pe's/<([a-zA-Z]*?)>/;/g' | perl -pe 's/<\/[a-zA-Z]*?>|<\/[a-zA-Z]*?>|<|\/>|>//g')
             echo "-- changeSetNoXML defined"
             if [[ !" ${ids[@]} " =~ ${id} ]]; then
