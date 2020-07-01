@@ -17,11 +17,11 @@ SERVICE_TICKETS=${CURRENT_DIR}/service_${FILE_BASE}.lst
 GUI_TICKETS=${CURRENT_DIR}/gui_${FILE_BASE}.lst
 BUG_TICKETS=${CURRENT_DIR}/bug_${FILE_BASE}.lst
 ALL_TICKETS=${CURRENT_DIR}/all_${FILE_BASE}.lst
-ALL_TICKETS_MD=${CURRENT_DIR}/CHANGELOG.md
+ALL_TICKETS_MD=${CURRENT_DIR}/CHANGELOG_${FROM_TAG}_${TO_TAG}.md
 
 if [ -z "$FROM_TAG" -o -z "$TO_TAG" ]
 then
-  echo "usage: assembla_tickets.sh <from_tag> <to_tag>" >&2
+  echo "usage: changelog.sh <git meveo directory> <from_tag> <to_tag>" >&2
   exit 1
 fi
 
@@ -59,7 +59,7 @@ cat "$TICKETS_LIST" | while read ticketNumber
 do
     currentTicket=$(( $currentTicket + 1 ))
     echo Ticket "core#${ticketNumber} (${currentTicket}/${ticketsCount})"
-    json=$( curl -H "X-Api-Key: ${API_KEY}" -H "X-Api-Secret: ${API_SECRET}" https://api.assembla.com/v1/spaces/cRAcZ4D1Cr4PP6acwqjQWU/tickets/${ticketNumber} )
+    json=$( curl -H "X-Api-Key: ${API_KEY}" -H "X-Api-Secret: ${API_SECRET}" https://api.assembla.com/v1/spaces/${SPACE}/tickets/${ticketNumber} )
     number=$(echo $json | jq -c '.number') 
     type=$(echo $json | jq -c '.custom_fields.Type' | sed 's/"//g')
     summary=$(echo $json | jq -c '.summary' | sed 's/"//g')
@@ -86,38 +86,23 @@ do
     fi
 done
 
-echo -e "\n"
-echo -e "------------------------\n"
-echo -e "Model tickets: \n"
-echo -e "------------------------\n"
 
 cat $MODEL_TICKETS>>"$ALL_TICKETS_MD"
 
-echo -e "\n"
-echo -e "------------------------\n"
-echo -e "API tickets: \n"
-echo -e "------------------------\n"
-
 cat $API_TICKETS>>"$ALL_TICKETS_MD"
-
-echo -e "\n"
-echo -e "------------------------\n"
-echo -e "Service tickets: \n"
-echo -e "------------------------\n"
 
 cat $SERVICE_TICKETS>>"$ALL_TICKETS_MD"
 
-echo -e "\n"
-echo -e "------------------------\n"
-echo -e "GUI tickets: \n"
-echo -e "------------------------\n"
-
 cat $GUI_TICKETS>>"$ALL_TICKETS_MD"
 
-
-echo -e "\n"
-echo -e "------------------------\n"
-echo -e "BUG tickets: \n"
-echo -e "------------------------\n"
-
 cat $BUG_TICKETS>>"$ALL_TICKETS_MD"
+
+cat $ALL_TICKETS_MD
+
+rm "$TICKETS_LIST"
+rm "$MODEL_TICKETS"
+rm "$API_TICKETS"
+rm "$SERVICE_TICKETS"
+rm "$GUI_TICKETS"
+rm "$BUG_TICKETS"
+rm "$ALL_TICKETS"
